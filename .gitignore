@@ -1,0 +1,36 @@
+# Node modules (backend + worker + frontend)
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/build/
+**/.next/
+**/.out/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker + Databases
+**/dump.rdb
+**/data/
+**/mongo_data/
+**/redis_data/
+**/minio_data/
+
+# Uploaded files (user-generated, don’t commit)
+backend/api/uploads/
+
+# Env files
+.env
+.env.local
+.env.*.local
+backend/api/.env*
+backend/worker/.env*
+frontend/.env*
+
+# System files
+.DS_Store
+
