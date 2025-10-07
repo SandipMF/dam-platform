@@ -8,6 +8,9 @@ export interface AssetDoc extends Document {
   thumbnail?: string;
   status: "pending" | "processing" | "completed" | "failed";
   createdAt: Date;
+  
+  downloads: number;
+  updatedAt: Date;
 }
 
 const assetSchema = new Schema<AssetDoc>(
@@ -22,6 +25,7 @@ const assetSchema = new Schema<AssetDoc>(
       enum: ["pending", "processing", "completed", "failed"],
       default: "pending",
     },
+    downloads: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

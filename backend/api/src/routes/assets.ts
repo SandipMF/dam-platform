@@ -37,7 +37,7 @@ router.get("/:id/thumbnail", async (req, res) => {
     }
 
     const bucket = process.env.MINIO_BUCKET_NAME || "mybucket";
-    const key = decodeURIComponent(asset.path.split("/").pop()!); // extract file name
+    const key = decodeURIComponent(asset.thumbnail?.split("/").pop()!); // extract file name
 
     console.log("Fetching file from MinIO:", { bucket, key });
 
