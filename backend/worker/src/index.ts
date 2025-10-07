@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { assetWorker } from "./queue/assetQueue.js";
+import { assetWorker } from "./queue/assetQueue.ts";
 
 dotenv.config();
 

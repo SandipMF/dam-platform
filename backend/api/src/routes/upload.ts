@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
-import { assetQueue } from "../queue/assetQueue.js";
-import { Asset } from "../models/Asset.js";
+import { assetQueue } from "../queue/assetQueue.ts";
+import { Asset } from "../models/Asset.ts";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";

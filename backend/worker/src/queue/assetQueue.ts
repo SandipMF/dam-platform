@@ -1,8 +1,8 @@
 import { Queue, Worker } from "bullmq";
 import { Redis } from "ioredis";
-import { processImageJob } from "../jobs/imageJob.js";
-import { processVideoJob } from "../jobs/videoJob.js";
-import { connection } from "./redisConnection.js";
+import { processImageJob } from "../jobs/imageJob.ts";
+import { processVideoJob } from "../jobs/videoJob.ts";
+import { connection } from "./redisConnection.ts";
 
 // const connection = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 

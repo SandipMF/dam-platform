@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Asset } from "../models/Asset.js";
+import { Asset } from "../models/Asset.ts";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
 

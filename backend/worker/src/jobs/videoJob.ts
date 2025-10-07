@@ -1,6 +1,6 @@
 import ffmpeg from "fluent-ffmpeg";
 import path from "path";
-import Asset from "../api-types/AssetModel.js";
+import Asset from "../api-types/AssetModel.ts";
 
 export async function processVideoJob(assetId: string, job?: any) {
   const asset = await Asset.findById(assetId);

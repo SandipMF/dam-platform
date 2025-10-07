@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { connectDB } from "./config/db.js";
-import uploadRouter from "./routes/upload.js";
-import assetsRouter from "./routes/assets.js";
+import { connectDB } from "./config/db.ts";
+import uploadRouter from "./routes/upload.ts";
+import assetsRouter from "./routes/assets.ts";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
