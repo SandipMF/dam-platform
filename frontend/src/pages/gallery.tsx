@@ -84,7 +84,7 @@ export default function Gallery() {
                   className="w-32 h-32 object-cover rounded-md mb-3"
                 />
               ) : asset.type === "video" ? (
-                <video
+                <img
                   src={`http://localhost:4000/assets/${asset._id}/thumbnail`}
                   className="w-32 h-32 object-cover rounded-md mb-3"
                 />

@@ -48,8 +48,15 @@ router.get("/:id/thumbnail", async (req, res) => {
 
     const data = await s3.send(command);
 
-    res.setHeader("Content-Type", asset.type || "application/octet-stream");
-
+    const ext = key.split(".").pop();
+    const contentType =
+      ext === "jpg" || ext === "jpeg"
+        ? "image/jpeg"
+        : ext === "png"
+        ? "image/png"
+        : "application/octet-stream";
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Cache-Control", "no-store");
     // Stream file to client
     (data.Body as any).pipe(res);
   } catch (err: any) {

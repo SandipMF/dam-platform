@@ -1,5 +1,12 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+export interface AssetMetadata {
+  duration?: number; // in seconds
+  size?: number; // in bytes
+  codec?: string;
+  width?: number;
+  height?: number;
+}
 export interface AssetDoc extends Document {
   filename: string;
   type: "image" | "video" | "other";
@@ -8,9 +15,12 @@ export interface AssetDoc extends Document {
   thumbnail?: string;
   status: "pending" | "processing" | "completed" | "failed";
   createdAt: Date;
-  
+
   downloads: number;
   updatedAt: Date;
+
+  metadata?: AssetMetadata;
+  compressedPath?: string;
 }
 
 const assetSchema = new Schema<AssetDoc>(
@@ -26,6 +36,14 @@ const assetSchema = new Schema<AssetDoc>(
       default: "pending",
     },
     downloads: { type: Number, default: 0 },
+    compressedPath: { type: String },
+    metadata: {
+      duration: Number,
+      size: Number,
+      codec: String,
+      width: Number,
+      height: Number,
+    },
   },
   { timestamps: true }
 );
