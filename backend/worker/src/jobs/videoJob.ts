@@ -6,29 +6,16 @@ import ffprobePath from "ffprobe-static";
 import {
   GetObjectCommand,
   PutObjectCommand,
-  S3Client,
 } from "@aws-sdk/client-s3";
 import fs from "fs";
 import { Readable } from "stream";
 import sharp from "sharp";
+import { ENV } from "../constants/env.ts";
+import { s3 } from "../config/s3-config.ts";
 
 ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);
 ffmpeg.setFfprobePath(ffprobePath.path);
 
-const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT ?? "http://127.0.0.1:9000";
-const MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY ?? "minioadmin";
-const MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY ?? "minioadmin";
-const MINIO_BUCKET_NAME = process.env.MINIO_BUCKET_NAME ?? "mybucket";
-
-const s3 = new S3Client({
-  endpoint: MINIO_ENDPOINT,
-  region: "us-east-1",
-  credentials: {
-    accessKeyId: MINIO_ACCESS_KEY,
-    secretAccessKey: MINIO_SECRET_KEY,
-  },
-  forcePathStyle: true,
-});
 
 export async function processVideoJob(assetId: string, job?: any) {
   const asset = await Asset.findById(assetId);
@@ -36,7 +23,7 @@ export async function processVideoJob(assetId: string, job?: any) {
 
   const url = new URL(asset.path);
   let objectKey = decodeURIComponent(
-    url.pathname.replace(`/${MINIO_BUCKET_NAME}/`, "")
+    url.pathname.replace(`/${ENV.MINIO_BUCKET_NAME}/`, "")
   );
   objectKey = objectKey.replace(/^(\.\.?\/|\/)+/, "");
 
@@ -53,7 +40,7 @@ export async function processVideoJob(assetId: string, job?: any) {
 
     // 1. Download video from MinIO
     const getCmd = new GetObjectCommand({
-      Bucket: MINIO_BUCKET_NAME,
+      Bucket: ENV.MINIO_BUCKET_NAME,
       Key: objectKey,
     });
     const { Body } = await s3.send(getCmd);
@@ -131,7 +118,7 @@ export async function processVideoJob(assetId: string, job?: any) {
     const compressedKey = path.posix.join(cleanDir, `${base}-compressed.mp4`);
 
     const putCmd = new PutObjectCommand({
-      Bucket: MINIO_BUCKET_NAME,
+      Bucket: ENV.MINIO_BUCKET_NAME,
       Key: compressedKey,
       Body: fileData,
       ContentType: "video/mp4",
@@ -139,21 +126,21 @@ export async function processVideoJob(assetId: string, job?: any) {
     });
     await s3.send(putCmd);
 
-    const publicUrl = `${MINIO_ENDPOINT}/${MINIO_BUCKET_NAME}/${compressedKey}`;
+    const publicUrl = `${ENV.MINIO_ENDPOINT}/${ENV.MINIO_BUCKET_NAME}/${compressedKey}`;
 
     // Upload thumbnail
     const thumbData = await fs.promises.readFile(tempThumbOptimized);
     const thumbKey = `${base}-thumbnail.png`;
     await s3.send(
       new PutObjectCommand({
-        Bucket: MINIO_BUCKET_NAME,
+        Bucket: ENV.MINIO_BUCKET_NAME,
         Key: thumbKey,
         Body: thumbData,
         ContentType: "image/png",
         ACL: "public-read",
       })
     );
-    const thumbUrl = `${MINIO_ENDPOINT}/${MINIO_BUCKET_NAME}/${thumbKey}`;
+    const thumbUrl = `${ENV.MINIO_ENDPOINT}/${ENV.MINIO_BUCKET_NAME}/${thumbKey}`;
 
     // 5. Update asset in DB
     asset.metadata = meta;
