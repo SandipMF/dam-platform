@@ -2,20 +2,22 @@ import { Router } from "express";
 import { Asset } from "../models/Asset.ts";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
+import { s3 } from "../config/s3-config.ts";
+import { ENV } from "../constants/env.ts";
 
 dotenv.config();
 
 const router = Router();
 
-const s3 = new S3Client({
-  endpoint: process.env.MINIO_ENDPOINT || "http://127.0.0.1:9000",
-  region: "us-east-1",
-  credentials: {
-    accessKeyId: process.env.MINIO_ACCESS_KEY || "minioadmin",
-    secretAccessKey: process.env.MINIO_SECRET_KEY || "minioadmin",
-  },
-  forcePathStyle: true,
-});
+// const s3 = new S3Client({
+//   endpoint: process.env.MINIO_ENDPOINT || "http://127.0.0.1:9000",
+//   region: "us-east-1",
+//   credentials: {
+//     accessKeyId: process.env.MINIO_ACCESS_KEY || "minioadmin",
+//     secretAccessKey: process.env.MINIO_SECRET_KEY || "minioadmin",
+//   },
+//   forcePathStyle: true,
+// });
 
 // Get all assets
 router.get("/", async (req, res) => {
@@ -36,7 +38,7 @@ router.get("/:id/thumbnail", async (req, res) => {
       return res.status(404).json({ error: "Asset not found" });
     }
 
-    const bucket = process.env.MINIO_BUCKET_NAME || "mybucket";
+    const bucket = ENV.MINIO_BUCKET_NAME; //process.env.MINIO_BUCKET_NAME || "mybucket";
     const key = decodeURIComponent(asset.thumbnail?.split("/").pop()!); // extract file name
 
     console.log("Fetching file from MinIO:", { bucket, key });
@@ -89,7 +91,7 @@ router.get("/:id/download", async (req, res) => {
     asset.downloads = (asset.downloads || 0) + 1;
     await asset.save();
 
-    const bucket = process.env.MINIO_BUCKET_NAME || "mybucket";
+    const bucket = ENV.MINIO_BUCKET_NAME//process.env.MINIO_BUCKET_NAME || "mybucket";
     const key = decodeURIComponent(asset.path.split("/").pop()!);
 
     const command = new GetObjectCommand({
@@ -121,7 +123,7 @@ router.get("/:id/preview", async (req, res) => {
     const asset = await Asset.findById(req.params.id);
     if (!asset) return res.status(404).json({ error: "Asset not found" });
 
-    const bucket = process.env.MINIO_BUCKET_NAME || "mybucket";
+    const bucket = ENV.MINIO_BUCKET_NAME//process.env.MINIO_BUCKET_NAME || "mybucket";
     const key = decodeURIComponent(asset.path.split("/").pop()!);
 
     const command = new GetObjectCommand({ Bucket: bucket, Key: key });
