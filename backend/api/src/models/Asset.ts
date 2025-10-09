@@ -26,7 +26,7 @@ const assetSchema = new Schema<AssetDoc>(
     filename: { type: String, required: true },
     type: { type: String, enum: ["image", "video", "other"], required: true },
     size: { type: Number, required: true },
-    path: { type: String, required: true },
+    path: { type: String },
     status: {
       type: String,
       enum: ["pending", "processed", "failed", "completed"],

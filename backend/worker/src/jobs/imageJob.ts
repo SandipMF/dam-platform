@@ -1,10 +1,7 @@
 import sharp from "sharp";
 import path from "path";
 import Asset from "../api-types/AssetModel.ts";
-import {
-  GetObjectCommand,
-  PutObjectCommand,
-} from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
 import { Readable } from "stream";
 import { s3 } from "../config/s3-config.ts";
@@ -17,15 +14,16 @@ export async function processImageJob(assetId: string, job?: any) {
   // Extract key (object name) from public path
   const url = new URL(asset.path);
   const objectKey = decodeURIComponent(
-    url.pathname.replace(`/${ENV.MINIO_BUCKET_NAME}/`, "")
-  ); // remove leading '/'
+    url.pathname.replace(/^\/?[^/]+\//, "") // remove "/mybucket/"
+  );
 
   const ext = path.extname(objectKey);
   const base = path.basename(objectKey, ext);
   const tempInput = `/tmp/${base}${ext}`;
   const thumbExt = `.${ext.replace(".", "") || "png"}`;
   const tempThumb = `/tmp/${base}-thumbnail${thumbExt}`;
-  const thumbKey = `${base}-thumbnail${thumbExt}`;
+  const folder = assetId;
+  const thumbKey = `${folder}/${base}-thumbnail${thumbExt}`;
 
   try {
     if (job) job.updateProgress(10);

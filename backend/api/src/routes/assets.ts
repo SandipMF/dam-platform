@@ -39,7 +39,11 @@ router.get("/:id/thumbnail", async (req, res) => {
     }
 
     const bucket = ENV.MINIO_BUCKET_NAME; //process.env.MINIO_BUCKET_NAME || "mybucket";
-    const key = decodeURIComponent(asset.thumbnail?.split("/").pop()!); // extract file name
+    const fullUrl = asset.thumbnail as string; 
+    const key = fullUrl.replace(
+      `${ENV.MINIO_ENDPOINT}/${ENV.MINIO_BUCKET_NAME}/`,
+      ""
+    );
 
     console.log("Fetching file from MinIO:", { bucket, key });
 
@@ -91,7 +95,7 @@ router.get("/:id/download", async (req, res) => {
     asset.downloads = (asset.downloads || 0) + 1;
     await asset.save();
 
-    const bucket = ENV.MINIO_BUCKET_NAME//process.env.MINIO_BUCKET_NAME || "mybucket";
+    const bucket = ENV.MINIO_BUCKET_NAME; //process.env.MINIO_BUCKET_NAME || "mybucket";
     const key = decodeURIComponent(asset.path.split("/").pop()!);
 
     const command = new GetObjectCommand({
@@ -123,7 +127,7 @@ router.get("/:id/preview", async (req, res) => {
     const asset = await Asset.findById(req.params.id);
     if (!asset) return res.status(404).json({ error: "Asset not found" });
 
-    const bucket = ENV.MINIO_BUCKET_NAME//process.env.MINIO_BUCKET_NAME || "mybucket";
+    const bucket = ENV.MINIO_BUCKET_NAME; //process.env.MINIO_BUCKET_NAME || "mybucket";
     const key = decodeURIComponent(asset.path.split("/").pop()!);
 
     const command = new GetObjectCommand({ Bucket: bucket, Key: key });

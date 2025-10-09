@@ -3,10 +3,7 @@ import path from "path";
 import Asset from "../api-types/AssetModel.ts";
 import ffmpegPath from "ffmpeg-static";
 import ffprobePath from "ffprobe-static";
-import {
-  GetObjectCommand,
-  PutObjectCommand,
-} from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
 import { Readable } from "stream";
 import sharp from "sharp";
@@ -15,7 +12,6 @@ import { s3 } from "../config/s3-config.ts";
 
 ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);
 ffmpeg.setFfprobePath(ffprobePath.path);
-
 
 export async function processVideoJob(assetId: string, job?: any) {
   const asset = await Asset.findById(assetId);
@@ -130,7 +126,12 @@ export async function processVideoJob(assetId: string, job?: any) {
 
     // Upload thumbnail
     const thumbData = await fs.promises.readFile(tempThumbOptimized);
-    const thumbKey = `${base}-thumbnail.png`;
+    // const folder = assetId;
+    const thumbKey = `${assetId}/${base}-thumbnail.png`;
+    console.log("Uploading thumbnail to MinIO:", {
+      bucket: ENV.MINIO_BUCKET_NAME,
+      thumbKey,
+    });
     await s3.send(
       new PutObjectCommand({
         Bucket: ENV.MINIO_BUCKET_NAME,
