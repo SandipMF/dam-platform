@@ -2,7 +2,7 @@ import { Queue, Worker } from "bullmq";
 import { Redis } from "ioredis";
 import { processImageJob } from "../jobs/imageJob.ts";
 import { processVideoJob } from "../jobs/videoJob.ts";
-import { connection } from "./redisConnection.ts";
+import { connection } from "../config/redisConnection.ts";
 
 // Export queue to push jobs from backend API
 export const assetQueue = new Queue("assetQueue", { connection });

@@ -51,7 +51,7 @@ router.post("/", upload.array("files"), async (req, res) => {
         });
 
         const saved = await asset.save();
-
+        
         // enqueue job for worker
         await assetQueue.add("process", {
           assetId: (saved._id as string).toString(),

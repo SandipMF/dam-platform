@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { assetWorker } from "./queue/assetQueue.ts";
 import { connectDB } from "./config/db-config.ts";
-import { connection } from "./queue/redisConnection.ts";
+import { connection } from "./config/redisConnection.ts";
 
 dotenv.config();
 
