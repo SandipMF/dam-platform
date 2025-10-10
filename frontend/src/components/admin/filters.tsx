@@ -1,3 +1,4 @@
+import React from "react";
 import type { AssetType } from "../../models/asset";
 
 interface FiltersProps {
@@ -7,7 +8,7 @@ interface FiltersProps {
   setTypeFilter: (value: AssetType | "all") => void;
 }
 
-export default function Filters({
+function Filters({
   search,
   setSearch,
   typeFilter,
@@ -15,7 +16,11 @@ export default function Filters({
 }: FiltersProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6 w-full max-w-5xl">
+      <label htmlFor="search" className="sr-only">
+        Search files
+      </label>
       <input
+        id="search"
         type="text"
         placeholder="Search by filename..."
         value={search}
@@ -35,3 +40,5 @@ export default function Filters({
     </div>
   );
 }
+
+export default React.memo(Filters);

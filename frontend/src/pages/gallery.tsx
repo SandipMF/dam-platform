@@ -44,11 +44,15 @@ export default function Gallery() {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-gray-950 text-gray-100 flex flex-col items-center px-4 py-10">
-      <h2 className="text-2xl font-bold mb-6">Gallery</h2>
+    <main className="min-h-screen w-screen bg-gray-950 text-gray-100 flex flex-col items-center px-4 py-10">
+      <h1 className="text-2xl font-bold mb-6">Gallery</h1>
       {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6 w-full max-w-5xl">
+        <label htmlFor="search" className="sr-only">
+          Search filessss
+        </label>
         <input
+          id="search"
           type="text"
           placeholder="Search by filename..."
           value={search}
@@ -72,7 +76,7 @@ export default function Gallery() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
           {filteredAssets.map((asset) => (
-            <div
+            <article
               key={asset._id}
               className="bg-gray-800 rounded-lg p-4 shadow text-gray-200"
             >
@@ -80,13 +84,18 @@ export default function Gallery() {
               {asset.type === "image" ? (
                 <img
                   src={`http://localhost:4000/assets/${asset._id}/thumbnail`}
-                  alt={asset.filename}
+                  alt={`Preview thumbnail of ${asset.filename}`}
                   className="w-32 h-32 object-cover rounded-md mb-3"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : asset.type === "video" ? (
                 <img
                   src={`http://localhost:4000/assets/${asset._id}/thumbnail`}
+                  alt={`Preview thumbnail of ${asset.filename}`}
                   className="w-32 h-32 object-cover rounded-md mb-3"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <div className="w-32 h-32 bg-gray-700 flex items-center justify-center rounded-md mb-3">
@@ -107,6 +116,8 @@ export default function Gallery() {
                 <button
                   onClick={() => handlePreview(asset._id)}
                   className="px-3 py-1 bg-blue-500 text-white rounded text-xs"
+                  title={`Preview ${asset.filename}`}
+                  aria-label={`Preview file ${asset.filename}`}
                 >
                   Preview
                 </button>
@@ -122,10 +133,10 @@ export default function Gallery() {
               <p className="text-xs text-gray-400 mt-2">
                 {asset.downloads || 0} downloads
               </p>
-            </div>
+            </article>
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }

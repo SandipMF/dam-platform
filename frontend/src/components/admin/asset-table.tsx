@@ -1,3 +1,4 @@
+import React from "react";
 import type { Asset } from "../../models/asset";
 
 interface AssetTableProps {
@@ -6,11 +7,7 @@ interface AssetTableProps {
   onDownload: (assetId: string, filename: string) => void;
 }
 
-export default function AssetTable({
-  assets,
-  onPreview,
-  onDownload,
-}: AssetTableProps) {
+function AssetTable({ assets, onPreview, onDownload }: AssetTableProps) {
   return (
     <div className="w-full max-w-5xl">
       <table className="w-full border-collapse text-left text-gray-100">
@@ -38,6 +35,7 @@ export default function AssetTable({
                 <button
                   onClick={() => onPreview(asset._id)}
                   className="px-2 py-1 bg-blue-500 rounded text-xs"
+                  aria-label={`Preview ${asset.filename}`}
                 >
                   Preview
                 </button>
@@ -55,3 +53,5 @@ export default function AssetTable({
     </div>
   );
 }
+
+export default React.memo(AssetTable);

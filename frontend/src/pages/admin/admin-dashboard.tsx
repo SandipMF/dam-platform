@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { lazy, useCallback, useEffect, useMemo, useState } from "react";
 import type { Asset, AssetType } from "../../models/asset";
-import Filters from "./filters";
-import AssetTable from "./asset-table";
+
+const Filters = lazy(() => import("../../components/admin/filters"));
+const AssetTable = lazy(() => import("../../components/admin/asset-table"));
 
 const API_BASE = "http://localhost:4000";
 
@@ -24,20 +25,23 @@ export default function AdminDashboard() {
     loadAssets();
   }, []);
 
-  const filteredAssets = assets.filter((asset) => {
-    const matchesSearch = asset.filename
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesType = typeFilter === "all" ? true : asset.type === typeFilter;
-    return matchesSearch && matchesType;
-  });
+  const filteredAssets = useMemo(() => {
+    return assets.filter((asset) => {
+      const matchesSearch = asset.filename
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchesType =
+        typeFilter === "all" ? true : asset.type === typeFilter;
+      return matchesSearch && matchesType;
+    });
+  }, [assets, search, typeFilter]);
 
-  const handlePreview = (assetId: string) => {
+  const handlePreview = useCallback((assetId: string) => {
     const url = `${API_BASE}/assets/${assetId}/preview`;
     window.open(url, "_blank");
-  };
+  }, []);
 
-  const handleDownload = (assetId: string, filename: string) => {
+  const handleDownload = useCallback((assetId: string, filename: string) => {
     const url = `${API_BASE}/assets/${assetId}/download`;
     const a = document.createElement("a");
     a.href = url;
@@ -45,7 +49,7 @@ export default function AdminDashboard() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  };
+  }, []);
 
   return (
     <div className="min-h-screen w-screen bg-gray-950 text-gray-100 flex flex-col items-center px-4 py-10">
