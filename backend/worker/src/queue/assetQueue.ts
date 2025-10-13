@@ -7,6 +7,15 @@ import { connection } from "../config/redisConnection.ts";
 // Export queue to push jobs from backend API
 export const assetQueue = new Queue("assetQueue", { connection });
 
+// extracted processor function
+export async function processAssetJob(job: { data: { assetId: string; type: string } }) {
+  const { assetId, type } = job.data;
+  if (type === "image") {
+    await processImageJob(assetId, job);
+  } else if (type === "video") {
+    await processVideoJob(assetId, job);
+  }
+}
 // Worker listens to jobs
 export const assetWorker = new Worker(
   "assetQueue",
