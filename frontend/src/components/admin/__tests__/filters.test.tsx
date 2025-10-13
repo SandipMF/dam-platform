@@ -1,45 +1,65 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Filters from "../filters";
+import type { AssetType } from "../../../models/asset";
 
 describe("Filters Component", () => {
   const mockSetSearch = jest.fn();
   const mockSetTypeFilter = jest.fn();
 
-  test("renders input and select", () => {
+  const setup = (search = "", typeFilter: AssetType | "all" = "all") => {
     render(
       <Filters
-        search=""
+        search={search}
         setSearch={mockSetSearch}
-        typeFilter="all"
+        typeFilter={typeFilter}
         setTypeFilter={mockSetTypeFilter}
       />
     );
+  };
 
-    // Input
-    const input = screen.getByPlaceholderText(/search by filename/i);
-    expect(input).toBeInTheDocument();
-
-    // Select
-    const select = screen.getByRole("combobox");
-    expect(select).toBeInTheDocument();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  test("calls callbacks on change", () => {
-    render(
-      <Filters
-        search=""
-        setSearch={mockSetSearch}
-        typeFilter="all"
-        setTypeFilter={mockSetTypeFilter}
-      />
+  test("renders search input and dropdown", () => {
+    setup();
+    expect(
+      screen.getByPlaceholderText("Search by filename...")
+    ).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
+  });
+
+  test("renders all filter options", () => {
+    setup();
+    const options = screen.getAllByRole("option").map((o) => o.textContent);
+    expect(options).toEqual(["All", "Images", "Videos", "Other"]);
+  });
+
+  test("renders correct initial values", () => {
+    setup("cat", "video");
+    expect(screen.getByPlaceholderText("Search by filename...")).toHaveValue(
+      "cat"
     );
+    expect(screen.getByRole("combobox")).toHaveValue("video");
+  });
 
-    const input = screen.getByPlaceholderText(/search by filename/i);
-    fireEvent.change(input, { target: { value: "file.jpg" } });
-    expect(mockSetSearch).toHaveBeenCalledWith("file.jpg");
+  test("calls setSearch when typing", () => {
+    setup();
+    const input = screen.getByPlaceholderText("Search by filename...");
+    fireEvent.change(input, { target: { value: "dog" } });
+    expect(mockSetSearch).toHaveBeenCalledWith("dog");
+  });
 
+  test("calls setTypeFilter when changing dropdown", () => {
+    setup();
     const select = screen.getByRole("combobox");
     fireEvent.change(select, { target: { value: "image" } });
     expect(mockSetTypeFilter).toHaveBeenCalledWith("image");
+  });
+
+  test("label connects correctly with input", () => {
+    setup();
+    const label = screen.getByLabelText("Search files");
+    expect(label).toBeInTheDocument();
   });
 });
