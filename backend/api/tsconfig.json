@@ -10,7 +10,7 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
   },
-  "include": ["src"]
+  "include": ["src", "jest.setup.ts"]
 }

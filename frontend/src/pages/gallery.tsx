@@ -6,7 +6,7 @@ export default function Gallery() {
   const { assets, loadAssets } = useAppContext();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
-  const API_BASE = process.env.API_BASE || "http://localhost:4000";
+  const API_BASE = "http://localhost:4000";
 
   useEffect(() => {
     console.log("Loading assets from backend...");
